@@ -42,9 +42,5 @@ npm run build
 
 Once the build process is completed, your application will be ready for deployment in a production environment.
 
-## 💪 For Dev-OPS engineers:
-
-This project is deployed on GitHub Pages infrastructure using the following .yml-scenario: [deploy.yml](https://github.com/petrtopor/quizzes-app/blob/main/.github/workflows/deploy.yml). Feel free to use it or adopt it for your needs.
-
 
 # quizzes-app
