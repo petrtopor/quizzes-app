@@ -52,14 +52,14 @@
           <v-btn
             variant="outlined"
             color="#2196F3"
-            :to="`/${$route.href.split('/')[$route.href.split('/').length - 2]}`"
+            @click="back()"
           >
             Отменить
           </v-btn>
         </v-col>
         <v-col cols="auto">
           <v-btn type="submit" @click="submit" :disabled="!valid" :loading="isLoading" color="#2196F3">
-            Добавить
+            {{ !$route.params?.id ? 'Добавить' : 'Сохранить' }}
           </v-btn>
         </v-col>
       </v-row>
@@ -81,7 +81,11 @@
   const valid = ref(false)
   const isLoading = ref(false)
 
-  console.log('$route:\t', useRoute())
+  const { params } = useRoute()
+  const { back } = useRouter()
+  const { data, pending, error, refresh } = await useFetch(`http://127.0.0.1:8000/api/users/${params?.id}/`, {
+    immediate: false
+  })
 
   const name = ref('')
   const nameRules = [
@@ -114,12 +118,20 @@
   const phone = ref('')
 
   const status = ref('ACTIVE')
+
+  if(params?.id) {
+    await refresh()
+    name.value = data.value.full_name
+    email.value = data.value.email
+    phone.value = data.value.phone
+    status.value = data.value.status
+  }
   
   const submit = async () => {
     isLoading.value = true
     try {
-      const response = await $fetch('http://127.0.0.1:8000/api/users/', {
-        method: 'POST',
+      const response = await $fetch(`http://127.0.0.1:8000/api/users${!params?.id ? '' : `/${params?.id}`}/`, {
+        method: !params?.id ? 'POST' : 'PUT',
         body: {
           status: status.value,
           full_name: name.value,
@@ -131,6 +143,7 @@
       console.error(error)
     } finally {
       isLoading.value = false
+      back()
     }
   }
 </script>

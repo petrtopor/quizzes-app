@@ -21,7 +21,7 @@
             <v-spacer></v-spacer>
             <v-col cols="auto">
               <v-btn
-                v-if="!$route.href.includes('create')"
+                v-if="!$route.href.includes('create') && !$route.params?.id"
                 :to="`${$route.href}/create`"
               >
                 Создать
