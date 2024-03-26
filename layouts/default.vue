@@ -7,21 +7,30 @@
           class="align-start fill-height mx-auto"
           max-width="900"
         >
-          <v-row>
-            <v-col cols="12">
+          <v-row justify="space-between">
+            <v-col cols="auto">
               <v-tabs>
-                <v-tab to="quizzes">
+                <v-tab to="/quizzes">
                   Quizzes
                 </v-tab>
-                <v-tab to="users">
+                <v-tab to="/users">
                   Users
                 </v-tab>
               </v-tabs>
             </v-col>
+            <v-spacer></v-spacer>
+            <v-col cols="auto">
+              <v-btn
+                v-if="!$route.href.includes('create')"
+                :to="`${$route.href}/create`"
+              >
+                Создать
+              </v-btn>
+            </v-col>
           </v-row>
           <v-row>
             <v-col cols="12">
-              <router-view />
+              <NuxtPage />
             </v-col>
           </v-row>
         </v-responsive>
