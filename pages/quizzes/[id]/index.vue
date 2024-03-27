@@ -66,7 +66,7 @@
                   <v-divider></v-divider>
                 </v-col>
               </v-row>
-              <template v-for="(question, questionIndex) in questions" :key="question.id">
+              <template v-for="(question, questionIndex) in questionsToShow" :key="question.id">
                 <v-row :class="{'mb-3': question.type !== 'Single'}">
                   <v-col class="py-0">
                     <v-row>
@@ -101,7 +101,7 @@
                   </v-col>
                 </v-row>
                 <v-row
-                  v-if="questionIndex < (questions.length - 1)"
+                  v-if="questionIndex < (questionsToShow.length - 1)"
                   class="mt-0"
                 >
                   <v-col>
@@ -111,9 +111,24 @@
               </template>
             </template>
           </v-container>
-          <v-row class="mt-3">
+          <v-row class="mt-3" v-if="logic !== 'Sequential'">
             <v-col>
               <v-btn color="#2196F3">
+                Отправить
+              </v-btn>
+            </v-col>
+          </v-row>
+          <v-row class="mt-3" v-else>
+            <v-col v-if="currentQuestionIndex > 0" cols="2">
+              <v-btn color="#2196F3" variant="outlined" @click="() => { currentQuestionIndex -- }">
+                Назад
+              </v-btn>
+            </v-col>
+            <v-col cols="2">
+              <v-btn color="#2196F3" v-if="currentQuestionIndex < questions.length - 1" @click="() => { currentQuestionIndex ++ }">
+                Далее
+              </v-btn>
+              <v-btn color="#2196F3" v-else>
                 Отправить
               </v-btn>
             </v-col>
@@ -131,9 +146,12 @@
 const { params } = useRoute()
 const { back } = useRouter()
 const { data, refresh } = await useFetch(`http://127.0.0.1:8000/api/quizzes/${params.id}/`)
-const { id, title, questions } = data.value
+const { id, title, questions, logic } = data.value
 
 const isLoading = ref(false)
+
+const currentQuestionIndex = ref(0)
+const questionsToShow = computed(() => logic !== 'Sequential' ? questions : [questions[currentQuestionIndex.value]])
 
 const onDeleteClick = async () => {
   isLoading.value = true
