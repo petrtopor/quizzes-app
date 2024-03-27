@@ -32,8 +32,10 @@
             <td>{{ item.phone }}</td>
             <td>
               <v-row align="center">
-                <v-col>
-                  {{ item.status }}
+                <v-col cols="9">
+                  <v-chip label :color="item.status !== 'ACTIVE' ? 'error' : 'success'">
+                    {{ item.status !== 'ACTIVE' ? 'ЗАБЛОКИРОВАН' : 'АКТИВЕН' }}
+                  </v-chip>
                 </v-col>
                 <v-spacer></v-spacer>
                 <v-col>
