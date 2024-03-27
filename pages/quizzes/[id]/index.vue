@@ -1,16 +1,125 @@
 <template>
   <Suspense>
     <template #default>
-      <v-container class="bg-white rounded-lg">
-        <v-row>
-          <v-col cols="6">
-            {{ id }}
-          </v-col>
-          <v-col cols="6">
-            {{ title }}
-          </v-col>
-        </v-row>
-      </v-container>
+      <v-row>
+        <v-col>
+          <v-container class="bg-white rounded-lg">
+            <v-row>
+              <v-col>
+                <div class="quiz-title">{{ title }}</div>
+              </v-col>
+              <v-spacer></v-spacer>
+              <v-col cols="1">
+                <v-menu>
+                  <template v-slot:activator="{ props }">
+                    <v-btn
+                      v-bind="props"
+                      flat
+                      slim
+                      icon="mdi-dots-vertical"
+                      size="small"
+                    />
+                  </template>
+                  <v-list>
+                    <v-list-item>
+                      <v-list-item-title @click="$router.push(`/quizzes/${id}/edit/`)">
+                        Редактировать
+                      </v-list-item-title>
+                    </v-list-item>
+                    <v-list-item>
+                      <v-dialog max-width="500">
+                        <template v-slot:activator="{ props: activatorProps }">
+                          <v-list-item-title v-bind="activatorProps">Удалить</v-list-item-title>
+                        </template>
+    
+                        <template v-slot:default="{ isActive }">
+                          <v-card title="Подтверждение">
+                            <v-card-text>
+                              Вы хотите удалить опрос? Отменить действие будет невозможно.
+                            </v-card-text>
+    
+                            <v-card-actions>
+                              <v-spacer></v-spacer>
+    
+                              <v-btn
+                                color="blue"
+                                text="Удалить"
+                                @click="onDeleteClick(id)"
+                                :loading="isLoading"
+                              />
+                              <v-btn
+                                text="Отменить"
+                                @click="isActive.value = false"
+                              />
+                            </v-card-actions>
+                          </v-card>
+                        </template>
+                      </v-dialog>
+                    </v-list-item>
+                  </v-list>
+                </v-menu>
+              </v-col>
+            </v-row>
+            <template v-if="questions?.length">
+              <v-row class="mt-0">
+                <v-col>
+                  <v-divider></v-divider>
+                </v-col>
+              </v-row>
+              <template v-for="(question, questionIndex) in questions" :key="question.id">
+                <v-row :class="{'mb-3': question.type !== 'Single'}">
+                  <v-col class="py-0">
+                    <v-row>
+                      <v-col>
+                        <div class="question-name">
+                          {{ questionIndex }}. {{ question.text }}
+                        </div>
+                      </v-col>
+                    </v-row>
+                    <v-row>
+                      <v-col>
+                        <v-radio-group v-if="question.type === 'Single'">
+                          <v-radio
+                            v-for="(answer, answerIndex) in question.answers"
+                            :key="`question-${questionIndex}-answer-${answerIndex}-key`"
+                            :label="answer.text"
+                            :value="answer.text"
+                          />
+                        </v-radio-group>
+                        <template v-else>
+                          <v-row
+                            v-for="(answer, answerIndex) in question.answers"
+                            :key="`question-${questionIndex}-answer-${answerIndex}-key`"
+                          >
+                            <v-col>
+                              <v-text-field hide-details variant="outlined" density="compact" :value="answer.text" />
+                            </v-col>
+                          </v-row>
+                        </template>
+                      </v-col>
+                    </v-row>
+                  </v-col>
+                </v-row>
+                <v-row
+                  v-if="questionIndex < (questions.length - 1)"
+                  class="mt-0"
+                >
+                  <v-col>
+                    <v-divider></v-divider>
+                  </v-col>
+                </v-row>
+              </template>
+            </template>
+          </v-container>
+          <v-row class="mt-3">
+            <v-col>
+              <v-btn color="#2196F3">
+                Отправить
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
     </template>
     <template #fallback>
       <div>Loading...</div>
@@ -22,7 +131,7 @@
 const { params } = useRoute()
 const { back } = useRouter()
 const { data, refresh } = await useFetch(`http://127.0.0.1:8000/api/quizzes/${params.id}/`)
-const { id, title } = data.value
+const { id, title, questions } = data.value
 
 const isLoading = ref(false)
 
@@ -42,8 +151,17 @@ const onDeleteClick = async () => {
 </script>
 
 <style lang="scss" scoped>
-.custom-icon-style {
-  background-color: #FFFFFF !important;
-  color: #BBDEFB !important;
+.quiz-title {
+  font-size: 20px !important;
+  font-weight: 500 !important;
+  line-height: 32px !important;
+  letter-spacing: 0.25px !important;
+}
+
+.question-name {
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
+  letter-spacing: 0.5px;
 }
 </style>
