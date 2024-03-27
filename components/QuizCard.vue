@@ -11,7 +11,7 @@
       </div>
     </template>
     <template #append>
-      <v-menu>
+      <v-menu v-model="isMenuOpen">
         <template v-slot:activator="{ props }">
           <v-btn
             v-bind="props"
@@ -23,27 +23,40 @@
         </template>
         <v-list>
           <v-list-item>
-            <v-list-item-title>Редактировать</v-list-item-title>
+            <v-list-item-title @click="$router.push(`/quizzes/${id}/edit/`)">
+              Редактировать
+            </v-list-item-title>
           </v-list-item>
           <v-list-item>
-            <v-dialog max-width="500">
+            <v-list-item-title @click="$router.push(`/quizzes/${id}/`)">
+              Просмотр
+            </v-list-item-title>
+          </v-list-item>
+          <v-list-item>
+            <v-dialog v-model="isDeleteDialogVisible" max-width="500">
               <template v-slot:activator="{ props: activatorProps }">
                 <v-list-item-title v-bind="activatorProps">Удалить</v-list-item-title>
               </template>
 
               <template v-slot:default="{ isActive }">
-                <v-card title="Dialog">
+                <v-card title="Подтверждение">
                   <v-card-text>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                    Вы хотите удалить просмотр? Отменить действие будет невозможно.
                   </v-card-text>
 
                   <v-card-actions>
                     <v-spacer></v-spacer>
 
                     <v-btn
-                      text="Close Dialog"
+                      color="blue"
+                      text="Удалить"
+                      @click="onDeleteClick(id)"
+                      :loading="isLoading"
+                    />
+                    <v-btn
+                      text="Отменить"
                       @click="isActive.value = false"
-                    ></v-btn>
+                    />
                   </v-card-actions>
                 </v-card>
               </template>
@@ -58,7 +71,30 @@
 <script setup lang="ts">
   defineProps<{
     title: string
+    id: number
   }>()
+
+  const emit = defineEmits(['deleted'])
+
+  const isLoading = ref(false)
+  const isDeleteDialogVisible = ref(false)
+  const isMenuOpen = ref(false)
+
+  const onDeleteClick = async (id: number) => {
+    isLoading.value = true
+    try {
+      const response = await $fetch(`http://127.0.0.1:8000/api/quizzes/${id}/`, {
+        method: 'DELETE'
+      })
+    } catch(error) {
+      console.error(error)
+    } finally {
+      isLoading.value = false
+      isDeleteDialogVisible.value = false
+      isMenuOpen.value = false
+      emit('deleted')
+    }
+  }
 </script>
 
 <style lang="scss" scoped>
