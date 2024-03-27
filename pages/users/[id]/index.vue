@@ -1,15 +1,13 @@
 <template>
-  <h3>Подробности пользователя</h3>
   <Suspense>
     <template #default>
-      <v-container class="bg-white">
+      <v-container class="bg-white rounded-lg">
         <v-row>
           <v-col cols="3">
-            <!-- I am user with id: {{ $route.params.id }} -->
-            <!-- avatar -->
             <v-icon
               icon="mdi-account-circle"
               size="192"
+              class="custom-icon-style"
             />
           </v-col>
           <v-col cols="6">
@@ -46,7 +44,9 @@
               </v-col>
               <v-spacer></v-spacer>
               <v-col cols="9">
-                {{ status }}
+                <v-chip label :color="status !== 'ACTIVE' ? 'error' : 'success'">
+                  {{ status !== 'ACTIVE' ? 'ЗАБЛОКИРОВАН' : 'АКТИВЕН' }}
+                </v-chip>
               </v-col>
             </v-row>
           </v-col>
@@ -132,3 +132,10 @@ const onDeleteClick = async () => {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.custom-icon-style {
+  background-color: #FFFFFF !important;
+  color: #BBDEFB !important;
+}
+</style>
