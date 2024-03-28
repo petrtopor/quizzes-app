@@ -116,48 +116,58 @@
             <v-btn @click="setFormLogic('Sequential')" :variant="form.logic === 'Dependent' ? 'outlined' : 'tonal'">По порядку</v-btn>
             <v-btn @click="setFormLogic('Dependent')" :variant="form.logic === 'Dependent' ? 'tonal' : 'outlined'">Логический</v-btn>
           </v-container>
-          <v-row v-if="form.logic === 'Dependent'">
-            <v-col>
-              <v-select
-                hide-details
-                label="Выберите вопрос"
-                variant="outlined"
-                density="compact"
-                v-model="questionSelected"
-                :items="questionSelectOptions"
-                append-icon="mdi-delete-outline"
-                @click:append="questionSelectedReset"
-              />
-            </v-col>
-          </v-row>
-          <template v-if="form.logic === 'Dependent' && questionSelected !== null">
-            <v-row
-              v-for="answer in form.questions.find(question => question.id === questionSelected).answers"
-              :key="`question-selected-key-id-${answer.id}`"
-            >
-              <v-col cols="5">
-                <v-text-field
-                  disabled
-                  hide-details
-                  variant="outlined"
-                  density="compact"
-                  :value="answer.text"
-                  @blur="resetEditing"
-                />
-              </v-col>
-              <v-col>
-                <v-select
-                  hide-details
-                  label="То переводить на"
-                  placeholder="Выбрать вопрос"
-                  variant="outlined"
-                  density="compact"
-                  v-model="qqqqqq"
-                  :items="form.questions.map(question => ({ title: question.text, value: question.id }))"
-                />
+          <template v-if="form.logic === 'Dependent'">
+            <v-row v-for="(questionAssociated, questionAssociatedIndex) in questionsAssociated" :key="`question-associated-key-${questionAssociatedIndex}`">
+              <v-col cols="9">
+                <v-row>
+                  <v-col>
+                    <v-select
+                      label="Выберите вопрос"
+                      :items="form.questions.map(item => ({ title: item.text, value: item.id }))"
+                      v-model="questionsAssociated[questionAssociatedIndex]"
+                      density="compact"
+                      variant="outlined"
+                      append-icon="mdi-delete-outline"
+                      @click:append="onQuestionAssociatedDeleteClick(questionAssociatedIndex)"
+                    />
+                  </v-col>
+                </v-row>
+                <template v-if="questionAssociated !== null">
+                  <v-row
+                    v-for="(answer, answerIndex) in form.questions.find(question => question.id === questionAssociated).answers"
+                    :key="`answer-qai-${questionAssociatedIndex}-key-${answerIndex}`"
+                  >
+                    <v-col cols="4">
+                      <v-text-field
+                        hide-details
+                        variant="outlined"
+                        density="compact"
+                        :value="answer.text"
+                      />
+                    </v-col>
+                    <v-col cols="8">
+                      <v-select
+                        density="compact"
+                        variant="outlined"
+                        label="То переводить на"
+                        placeholder="Выбрать вопрос"
+                        :items="form.questions.map(item => ({ title: item.text, value: item.id }))"
+                        v-model="form.questions[form.questions.findIndex(el => el.id === questionAssociated)].answers[answerIndex].next_question_id"
+                      />
+                    </v-col>
+                  </v-row>
+                </template>
+                <v-row v-if="questionAssociated !== null">
+                  <v-col>
+                    <v-btn @click="addQuestionAssociated">
+                      + Добавить вопрос
+                    </v-btn>
+                  </v-col>
+                </v-row>
               </v-col>
             </v-row>
           </template>
+          
         </v-stepper-window-item>
         <v-stepper-window-item :value="4">
           // trololo
@@ -245,13 +255,13 @@
     execution_time: 2147483647,
     questions: [
       {
-        id: 0,
-        text: '',
+        id: 1,
+        text: 'Вопрос 1',
         type: 'Single',
         answers: [
           {
-            text: 'Вариант 1',
-            next_question_id: 1
+            text: 'Вопрос 1 - Вариант 1',
+            next_question_id: 0
           }
         ]
       }
@@ -259,15 +269,12 @@
     logic: 'Sequential'
   })
 
-  const qqqqqq = ref(null)
-
-  const questionSelectOptions = computed(() => (form.questions.map((question, questionIndex) => ({
-    title: `${questionIndex + 1}. ${question.text}`,
-    value: question.id
-  }))))
-  const questionSelected = ref(null)
-  const questionSelectedReset = () => {
-    questionSelected.value = null
+  const questionsAssociated = reactive([null])
+  const addQuestionAssociated = () => {
+    questionsAssociated.push(null)
+  }
+  const onQuestionAssociatedDeleteClick = (indexToRemove: number) => {
+    questionsAssociated.splice(indexToRemove, 1)
   }
 
   const setFormLogic = (logicValue: string) => {
@@ -276,8 +283,8 @@
 
   const addAnswer = (questionIndex: number) => {
     form.questions[questionIndex].answers.push({
-      text: `Вариант ${form.questions[questionIndex].answers.length + 1}`,
-      next_question_id: 1
+      text: `${form.questions[questionIndex].text} - Вариант ${form.questions[questionIndex].answers.length + 1}`,
+      next_question_id: 0
     })
   }
 
@@ -285,12 +292,12 @@
     const previousQuestion = form.questions[form.questions.length - 1]
     form.questions.push({
       id: previousQuestion.id + 1,
-      text: '',
+      text: `Вопрос ${previousQuestion.id + 1}`,
       type: 'Single',
       answers: [
         {
-          text: '',
-          next_question_id: previousQuestion.next_question_id + 1
+          text: `Вопрос ${previousQuestion.id + 1} - Вариант 1`,
+          next_question_id: 0
         }
       ]
     })
