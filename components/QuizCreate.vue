@@ -105,7 +105,59 @@
           </v-row>
         </v-stepper-window-item>
         <v-stepper-window-item :value="3">
-          // bar
+          <v-row>
+            <v-col>
+              <div class="text-body-2">
+                Порядок расположения вопросов в опросе:
+              </div>
+            </v-col>
+          </v-row>
+          <v-container class="pl-0">
+            <v-btn @click="setFormLogic('Sequential')" :variant="form.logic === 'Dependent' ? 'outlined' : 'tonal'">По порядку</v-btn>
+            <v-btn @click="setFormLogic('Dependent')" :variant="form.logic === 'Dependent' ? 'tonal' : 'outlined'">Логический</v-btn>
+          </v-container>
+          <v-row v-if="form.logic === 'Dependent'">
+            <v-col>
+              <v-select
+                hide-details
+                label="Выберите вопрос"
+                variant="outlined"
+                density="compact"
+                v-model="questionSelected"
+                :items="questionSelectOptions"
+                append-icon="mdi-delete-outline"
+                @click:append="questionSelectedReset"
+              />
+            </v-col>
+          </v-row>
+          <template v-if="form.logic === 'Dependent' && questionSelected !== null">
+            <v-row
+              v-for="answer in form.questions.find(question => question.id === questionSelected).answers"
+              :key="`question-selected-key-id-${answer.id}`"
+            >
+              <v-col cols="5">
+                <v-text-field
+                  disabled
+                  hide-details
+                  variant="outlined"
+                  density="compact"
+                  :value="answer.text"
+                  @blur="resetEditing"
+                />
+              </v-col>
+              <v-col>
+                <v-select
+                  hide-details
+                  label="То переводить на"
+                  placeholder="Выбрать вопрос"
+                  variant="outlined"
+                  density="compact"
+                  v-model="qqqqqq"
+                  :items="form.questions.map(question => ({ title: question.text, value: question.id }))"
+                />
+              </v-col>
+            </v-row>
+          </template>
         </v-stepper-window-item>
         <v-stepper-window-item :value="4">
           // trololo
@@ -203,8 +255,24 @@
           }
         ]
       }
-    ]
+    ],
+    logic: 'Sequential'
   })
+
+  const qqqqqq = ref(null)
+
+  const questionSelectOptions = computed(() => (form.questions.map((question, questionIndex) => ({
+    title: `${questionIndex + 1}. ${question.text}`,
+    value: question.id
+  }))))
+  const questionSelected = ref(null)
+  const questionSelectedReset = () => {
+    questionSelected.value = null
+  }
+
+  const setFormLogic = (logicValue: string) => {
+    form.logic = logicValue
+  }
 
   const addAnswer = (questionIndex: number) => {
     form.questions[questionIndex].answers.push({
