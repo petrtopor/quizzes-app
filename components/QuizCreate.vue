@@ -170,29 +170,121 @@
           
         </v-stepper-window-item>
         <v-stepper-window-item :value="4">
-          // trololo
+          <v-row>
+            <v-col>
+              <div class="text-body-2">
+                Прохождение опроса доступно:
+              </div>
+            </v-col>
+          </v-row>
+          <v-container class="pl-0">
+            <v-btn @click="setConditionsAccess('Always')" :variant="form.conditions.access === 'Limited' ? 'outlined' : 'tonal'">Всегда</v-btn>
+            <v-btn @click="setConditionsAccess('Limited')" :variant="form.conditions.access === 'Limited' ? 'tonal' : 'outlined'">Ограниченно</v-btn>
+            <v-row v-if="form.conditions.access === 'Limited'">
+              <v-col>
+                <v-menu
+                  v-model="startDateMenu"
+                  :close-on-content-click="false"
+                  transition="scale-transition"
+                  offset-y
+                  nudge-bottom="8"
+                  min-width="auto"
+                >
+                  <template #activator="{ props }">
+                    <v-text-field
+                      density="compact"
+                      variant="outlined"
+                      :model-value="formatDate(startDate)"
+                      label="Дата начала"
+                      placeholder="Выберите дату"
+                      append-inner-icon="mdi-chevron-down"
+                      readonly
+                      v-bind="props"
+                    />
+                  </template>
+                  <v-date-picker
+                    v-model="startDate"
+                    @update:modelValue="startDateMenu = false"
+                  />
+                </v-menu>
+              </v-col>
+              <v-col>
+                <v-menu
+                  v-model="expirationDateMenu"
+                  :close-on-content-click="false"
+                  transition="scale-transition"
+                  offset-y
+                  nudge-bottom="8"
+                  min-width="auto"
+                >
+                  <template #activator="{ props }">
+                    <v-text-field
+                      density="compact"
+                      variant="outlined"
+                      :model-value="formatDate(form.conditions.expiration_date)"
+                      label="Дата окончания"
+                      placeholder="Выберите дату"
+                      append-inner-icon="mdi-chevron-down"
+                      readonly
+                      v-bind="props"
+                    />
+                  </template>
+                  <v-date-picker
+                    v-model="form.conditions.expiration_date"
+                    @update:modelValue="expirationDateMenu = false"
+                  />
+                </v-menu>
+              </v-col>
+            </v-row>
+          </v-container>
         </v-stepper-window-item>
         <v-stepper-window-item :value="5">
-          // foobar
+          <v-container>
+            <v-row>
+              <v-col>
+                <div class="text-body-2">
+                  Выберете участников, кому будет доступен опрос.
+                </div>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col>
+                <v-autocomplete
+                  label="Autocomplete"
+                  :loading="isUsersLoading"
+                  :items="users.map(user => ({ title: user.full_name, value: user.id }))"
+                  variant="outlined"
+                  density="compact"
+                  v-model="form.assignment[0].id"
+                />
+              </v-col>
+            </v-row>
+          </v-container>
         </v-stepper-window-item>
       </v-stepper-window>
-      
-      <v-stepper-actions class="bg-app-background">
-        <template #prev>
-          <v-btn
-            @click="onClickPrev"
-            variant="outlined"
-            color="#2196F3"
-          >
-            Назад
-          </v-btn>
-        </template>
-        <template #next>
-          <v-btn type="submit" color="#2196F3" @click="onClickNext">
-            Далее
-          </v-btn>
-        </template>
-      </v-stepper-actions>
+
+      <v-container>
+        <v-row>
+          <v-col>
+            <v-btn
+              @click="onClickPrev"
+              variant="outlined"
+              color="#2196F3"
+              :disabled="step < 2"
+            >
+              Назад
+            </v-btn>
+          </v-col>
+          <v-col>
+            <v-btn v-if="step < 5" type="submit" color="#2196F3" @click="onClickNext">
+              Далее
+            </v-btn>
+            <v-btn v-else type="submit" color="#2196F3">
+              Создать
+            </v-btn>
+          </v-col>
+        </v-row>
+      </v-container>
     </v-stepper>
     
   </v-form>
@@ -250,6 +342,16 @@
     }
   ]
 
+  const startDateMenu = ref(false)
+  const expirationDateMenu = ref(false)
+  const startDate = ref(null)
+
+  const formatDate = (date) => {
+    if (!date) return '';
+    const options = { day: '2-digit', month: '2-digit', year: 'numeric' }
+    return new Date(date).toLocaleDateString('ru-RU', options)
+  }
+
   const form = reactive({
     title: '',
     execution_time: 2147483647,
@@ -266,8 +368,21 @@
         ]
       }
     ],
-    logic: 'Sequential'
+    logic: 'Sequential',
+    conditions: {
+      access: 'Always',
+      expiration_date: null
+    },
+    assignment: [
+      {
+        id: null
+      }
+    ]
   })
+
+  const setConditionsAccess = (conditionsAccess: string) => {
+    form.conditions.access = conditionsAccess
+  }
 
   const questionsAssociated = reactive([null])
   const addQuestionAssociated = () => {
@@ -314,6 +429,11 @@
   const { back } = useRouter()
   const { data, pending, error, refresh } = await useFetch(`http://127.0.0.1:8000/api/quizzes/${params?.id}/`, {
     immediate: false
+  })
+
+  const { data: users, refresh: refreshUsers, pending: isUsersLoading } = await useFetch('http://127.0.0.1:8000/api/users/', {
+    lazy: true,
+    server: false
   })
 
   if(params?.id) {
