@@ -1,5 +1,4 @@
 <template>
-  <h3>Добавление квиза</h3>
   <Suspense>
     <template #default>
       <quiz-create />

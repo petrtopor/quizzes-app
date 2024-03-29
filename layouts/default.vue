@@ -1,6 +1,5 @@
 <template>
   <v-app>
-    <h3>Default layout</h3>
     <v-main class="bg-app-background">
       <v-container class="fill-height">
         <v-responsive
