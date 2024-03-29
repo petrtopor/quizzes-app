@@ -72,7 +72,7 @@
                     <v-row>
                       <v-col>
                         <div class="question-name">
-                          {{ questionIndex }}. {{ question.text }}
+                          {{ currentQuestionIndex + 1}}. {{ question.text }}
                         </div>
                       </v-col>
                     </v-row>
