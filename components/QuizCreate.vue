@@ -105,32 +105,186 @@
           </v-row>
         </v-stepper-window-item>
         <v-stepper-window-item :value="3">
-          // bar
+          <v-row>
+            <v-col>
+              <div class="text-body-2">
+                Порядок расположения вопросов в опросе:
+              </div>
+            </v-col>
+          </v-row>
+          <v-container class="pl-0">
+            <v-btn @click="setFormLogic('Sequential')" :variant="form.logic === 'Dependent' ? 'outlined' : 'tonal'">По порядку</v-btn>
+            <v-btn @click="setFormLogic('Dependent')" :variant="form.logic === 'Dependent' ? 'tonal' : 'outlined'">Логический</v-btn>
+          </v-container>
+          <template v-if="form.logic === 'Dependent'">
+            <v-row v-for="(questionAssociated, questionAssociatedIndex) in questionsAssociated" :key="`question-associated-key-${questionAssociatedIndex}`">
+              <v-col cols="9">
+                <v-row>
+                  <v-col>
+                    <v-select
+                      label="Выберите вопрос"
+                      :items="form.questions.map(item => ({ title: item.text, value: item.id }))"
+                      v-model="questionsAssociated[questionAssociatedIndex]"
+                      density="compact"
+                      variant="outlined"
+                      append-icon="mdi-delete-outline"
+                      @click:append="onQuestionAssociatedDeleteClick(questionAssociatedIndex)"
+                    />
+                  </v-col>
+                </v-row>
+                <template v-if="questionAssociated !== null">
+                  <v-row
+                    v-for="(answer, answerIndex) in form.questions.find(question => question.id === questionAssociated).answers"
+                    :key="`answer-qai-${questionAssociatedIndex}-key-${answerIndex}`"
+                  >
+                    <v-col cols="4">
+                      <v-text-field
+                        hide-details
+                        variant="outlined"
+                        density="compact"
+                        :value="answer.text"
+                      />
+                    </v-col>
+                    <v-col cols="8">
+                      <v-select
+                        density="compact"
+                        variant="outlined"
+                        label="То переводить на"
+                        placeholder="Выбрать вопрос"
+                        :items="form.questions.map(item => ({ title: item.text, value: item.id }))"
+                        v-model="form.questions[form.questions.findIndex(el => el.id === questionAssociated)].answers[answerIndex].next_question_id"
+                      />
+                    </v-col>
+                  </v-row>
+                </template>
+                <v-row v-if="questionAssociated !== null">
+                  <v-col>
+                    <v-btn @click="addQuestionAssociated">
+                      + Добавить вопрос
+                    </v-btn>
+                  </v-col>
+                </v-row>
+              </v-col>
+            </v-row>
+          </template>
+          
         </v-stepper-window-item>
         <v-stepper-window-item :value="4">
-          // trololo
+          <v-row>
+            <v-col>
+              <div class="text-body-2">
+                Прохождение опроса доступно:
+              </div>
+            </v-col>
+          </v-row>
+          <v-container class="pl-0">
+            <v-btn @click="setConditionsAccess('Always')" :variant="form.conditions.access === 'Limited' ? 'outlined' : 'tonal'">Всегда</v-btn>
+            <v-btn @click="setConditionsAccess('Limited')" :variant="form.conditions.access === 'Limited' ? 'tonal' : 'outlined'">Ограниченно</v-btn>
+            <v-row v-if="form.conditions.access === 'Limited'">
+              <v-col>
+                <v-menu
+                  v-model="startDateMenu"
+                  :close-on-content-click="false"
+                  transition="scale-transition"
+                  offset-y
+                  nudge-bottom="8"
+                  min-width="auto"
+                >
+                  <template #activator="{ props }">
+                    <v-text-field
+                      density="compact"
+                      variant="outlined"
+                      :model-value="formatDate(startDate)"
+                      label="Дата начала"
+                      placeholder="Выберите дату"
+                      append-inner-icon="mdi-chevron-down"
+                      readonly
+                      v-bind="props"
+                    />
+                  </template>
+                  <v-date-picker
+                    v-model="startDate"
+                    @update:modelValue="startDateMenu = false"
+                  />
+                </v-menu>
+              </v-col>
+              <v-col>
+                <v-menu
+                  v-model="expirationDateMenu"
+                  :close-on-content-click="false"
+                  transition="scale-transition"
+                  offset-y
+                  nudge-bottom="8"
+                  min-width="auto"
+                >
+                  <template #activator="{ props }">
+                    <v-text-field
+                      density="compact"
+                      variant="outlined"
+                      :model-value="formatDate(form.conditions.expiration_date)"
+                      label="Дата окончания"
+                      placeholder="Выберите дату"
+                      append-inner-icon="mdi-chevron-down"
+                      readonly
+                      v-bind="props"
+                    />
+                  </template>
+                  <v-date-picker
+                    v-model="form.conditions.expiration_date"
+                    @update:modelValue="expirationDateMenu = false"
+                  />
+                </v-menu>
+              </v-col>
+            </v-row>
+          </v-container>
         </v-stepper-window-item>
         <v-stepper-window-item :value="5">
-          // foobar
+          <v-container>
+            <v-row>
+              <v-col>
+                <div class="text-body-2">
+                  Выберете участников, кому будет доступен опрос.
+                </div>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col>
+                <v-autocomplete
+                  label="Autocomplete"
+                  :loading="isUsersLoading"
+                  :items="users.map(user => ({ title: user.full_name, value: user.id }))"
+                  variant="outlined"
+                  density="compact"
+                  v-model="form.assignment[0].id"
+                />
+              </v-col>
+            </v-row>
+          </v-container>
         </v-stepper-window-item>
       </v-stepper-window>
-      
-      <v-stepper-actions class="bg-app-background">
-        <template #prev>
-          <v-btn
-            @click="onClickPrev"
-            variant="outlined"
-            color="#2196F3"
-          >
-            Назад
-          </v-btn>
-        </template>
-        <template #next>
-          <v-btn type="submit" color="#2196F3" @click="onClickNext">
-            Далее
-          </v-btn>
-        </template>
-      </v-stepper-actions>
+
+      <v-container>
+        <v-row>
+          <v-col>
+            <v-btn
+              @click="onClickPrev"
+              variant="outlined"
+              color="#2196F3"
+              :disabled="step < 2"
+            >
+              Назад
+            </v-btn>
+          </v-col>
+          <v-col>
+            <v-btn v-if="step < 5" type="submit" color="#2196F3" @click="onClickNext">
+              Далее
+            </v-btn>
+            <v-btn v-else type="submit" color="#2196F3">
+              Создать
+            </v-btn>
+          </v-col>
+        </v-row>
+      </v-container>
     </v-stepper>
     
   </v-form>
@@ -188,28 +342,64 @@
     }
   ]
 
+  const startDateMenu = ref(false)
+  const expirationDateMenu = ref(false)
+  const startDate = ref(null)
+
+  const formatDate = (date) => {
+    if (!date) return '';
+    const options = { day: '2-digit', month: '2-digit', year: 'numeric' }
+    return new Date(date).toLocaleDateString('ru-RU', options)
+  }
+
   const form = reactive({
     title: '',
     execution_time: 2147483647,
     questions: [
       {
-        id: 0,
-        text: '',
+        id: 1,
+        text: 'Вопрос 1',
         type: 'Single',
         answers: [
           {
-            text: 'Вариант 1',
-            next_question_id: 1
+            text: 'Вопрос 1 - Вариант 1',
+            next_question_id: 0
           }
         ]
+      }
+    ],
+    logic: 'Sequential',
+    conditions: {
+      access: 'Always',
+      expiration_date: null
+    },
+    assignment: [
+      {
+        id: null
       }
     ]
   })
 
+  const setConditionsAccess = (conditionsAccess: string) => {
+    form.conditions.access = conditionsAccess
+  }
+
+  const questionsAssociated = reactive([null])
+  const addQuestionAssociated = () => {
+    questionsAssociated.push(null)
+  }
+  const onQuestionAssociatedDeleteClick = (indexToRemove: number) => {
+    questionsAssociated.splice(indexToRemove, 1)
+  }
+
+  const setFormLogic = (logicValue: string) => {
+    form.logic = logicValue
+  }
+
   const addAnswer = (questionIndex: number) => {
     form.questions[questionIndex].answers.push({
-      text: `Вариант ${form.questions[questionIndex].answers.length + 1}`,
-      next_question_id: 1
+      text: `${form.questions[questionIndex].text} - Вариант ${form.questions[questionIndex].answers.length + 1}`,
+      next_question_id: 0
     })
   }
 
@@ -217,12 +407,12 @@
     const previousQuestion = form.questions[form.questions.length - 1]
     form.questions.push({
       id: previousQuestion.id + 1,
-      text: '',
+      text: `Вопрос ${previousQuestion.id + 1}`,
       type: 'Single',
       answers: [
         {
-          text: '',
-          next_question_id: previousQuestion.next_question_id + 1
+          text: `Вопрос ${previousQuestion.id + 1} - Вариант 1`,
+          next_question_id: 0
         }
       ]
     })
@@ -239,6 +429,11 @@
   const { back } = useRouter()
   const { data, pending, error, refresh } = await useFetch(`http://127.0.0.1:8000/api/quizzes/${params?.id}/`, {
     immediate: false
+  })
+
+  const { data: users, refresh: refreshUsers, pending: isUsersLoading } = await useFetch('http://127.0.0.1:8000/api/users/', {
+    lazy: true,
+    server: false
   })
 
   if(params?.id) {
