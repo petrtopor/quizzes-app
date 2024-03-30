@@ -113,10 +113,10 @@
             </v-col>
           </v-row>
           <v-container class="pl-0">
-            <v-btn @click="setFormLogic('Sequential')" :variant="form.logic === 'Dependent' ? 'outlined' : 'tonal'">По порядку</v-btn>
-            <v-btn @click="setFormLogic('Dependent')" :variant="form.logic === 'Dependent' ? 'tonal' : 'outlined'">Логический</v-btn>
+            <v-btn @click="setFormLogic('Sequential')" :variant="form.logic.type === 'Dependent' ? 'outlined' : 'tonal'">По порядку</v-btn>
+            <v-btn @click="setFormLogic('Dependent')" :variant="form.logic.type === 'Dependent' ? 'tonal' : 'outlined'">Логический</v-btn>
           </v-container>
-          <template v-if="form.logic === 'Dependent'">
+          <template v-if="form.logic.type === 'Dependent'">
             <v-row v-for="(questionAssociated, questionAssociatedIndex) in questionsAssociated" :key="`question-associated-key-${questionAssociatedIndex}`">
               <v-col cols="9">
                 <v-row>
@@ -367,7 +367,9 @@
         ]
       }
     ],
-    logic: 'Sequential',
+    logic: {
+      type: 'Sequential'
+    },
     conditions: {
       access: 'Always',
       expiration_date: null
@@ -392,7 +394,7 @@
   }
 
   const setFormLogic = (logicValue: string) => {
-    form.logic = logicValue
+    form.logic.type = logicValue
   }
 
   const addAnswer = (questionIndex: number) => {
