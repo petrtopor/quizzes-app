@@ -142,9 +142,12 @@
                       v-model="questionsAssociated[questionAssociatedIndex]"
                       density="compact"
                       variant="outlined"
-                      append-icon="mdi-delete-outline"
                       @click:append="onQuestionAssociatedDeleteClick(questionAssociatedIndex)"
-                    />
+                    >
+                     <template #append>
+                       <v-btn icon="mdi-delete-outline" flat :disabled="!questionsAssociated[questionAssociatedIndex]" />
+                     </template>
+                    </v-select>
                   </v-col>
                 </v-row>
                 <template v-if="questionAssociated !== null">
