@@ -329,19 +329,19 @@
     },
     {
       title: '1 час',
-      value: 2147483647
+      value: 2147483646
     },
     {
       title: '24 часа',
-      value: 2147483647
+      value: 2147483645
     },
     {
       title: '48 часов',
-      value: 2147483647
+      value: 2147483644
     },
     {
       title: '72 часа',
-      value: 2147483647
+      value: 2147483643
     },
   ]
 
@@ -465,7 +465,17 @@
     try {
       const response = await $fetch(`http://127.0.0.1:8000/api/quizzes${!params?.id ? '' : `/${params?.id}`}/`, {
         method: !params?.id ? 'POST' : 'PUT',
-        body: form
+        body: form/* form.logic.type !== 'Sequential' ?
+          form :
+          {
+            ...form,
+            questions: form.questions.map(question => ({
+              ...question,
+              answers: question.answers.map(answer => ({
+                text: answer.text
+              }))
+            }))
+          } */
       })
     } catch(error) {
       console.error(error)
