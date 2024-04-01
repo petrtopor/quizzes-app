@@ -268,16 +268,34 @@
               </v-col>
             </v-row>
             <v-row>
-              <v-col>
+              <v-col cols="6">
                 <v-autocomplete
+                  hide-details
                   :loading="isUsersLoading"
                   :items="users.map(user => ({ title: user.full_name, value: user.id }))"
                   variant="outlined"
                   density="compact"
                   multiple
-                  :model-balue="form.assignment"
+                  :model-value="form.assignment.map(({ id }) => id)"
                   @update:modelValue="onAssignmentUpdate"
-                />
+                  placeholder="Введите имя участника"
+                >
+                  <template #item="{ props, item }">
+                    <v-list-item
+                      v-bind="props"
+                      :title="item.title"
+                    >
+                      <template #append>
+                        <v-icon v-if="form.assignment.length && form.assignment.map(ass=>ass.id).includes(item.value)" icon="mdi-check" />
+                      </template>
+                    </v-list-item>
+                  </template>
+                  <template #selection="{ item, index }">
+                    <div v-if="index === 0" class="text">
+                      {{ selectionText }}
+                    </div>
+                  </template>
+                </v-autocomplete>
               </v-col>
             </v-row>
           </v-container>
@@ -401,9 +419,9 @@
       expiration_date: null
     },
     assignment: [
-      {
-        id: null
-      }
+      // {
+      //   id: null
+      // }
     ]
   })
 
@@ -501,6 +519,10 @@
       case 1: return true
       default: return true
     }
+  })
+
+  const selectionText = computed(() => {
+    return `Выбрано: ${form.assignment.length} участников`
   })
 </script>
 
