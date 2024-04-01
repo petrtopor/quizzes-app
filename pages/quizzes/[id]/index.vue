@@ -86,16 +86,7 @@
                             :value="answer.text"
                           />
                         </v-radio-group>
-                        <template v-else>
-                          <v-row
-                            v-for="(answer, answerIndex) in question.answers"
-                            :key="`question-${questionIndex}-answer-${answerIndex}-key`"
-                          >
-                            <v-col>
-                              <v-text-field hide-details variant="outlined" density="compact" :value="answer.text" />
-                            </v-col>
-                          </v-row>
-                        </template>
+                        <v-text-field v-else hide-details variant="outlined" density="compact" v-model="freeTypedAnswer" />
                       </v-col>
                     </v-row>
                   </v-col>
@@ -149,6 +140,8 @@ const { data, refresh } = await useFetch(`http://127.0.0.1:8000/api/quizzes/${pa
 const { id, title, questions, logic } = data.value
 
 const isLoading = ref(false)
+
+const freeTypedAnswer = ref('')
 
 const currentQuestionIndex = ref(0)
 const questionsToShow = computed(() => logic !== 'Sequential' ? questions : [questions[currentQuestionIndex.value]])
