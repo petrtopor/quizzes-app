@@ -289,7 +289,7 @@
               </v-col>
               <v-spacer></v-spacer>
               <v-col cols="5">
-                <v-btn v-if="step < 5" type="submit" color="#2196F3" @click="onClickNext">
+                <v-btn v-if="step < 5" type="submit" color="#2196F3" @click="onClickNext" :disabled="!isNextStepAvailable">
                   Далее
                 </v-btn>
                 <v-btn v-else type="submit" color="#2196F3" @click="submit">
@@ -368,7 +368,7 @@
 
   const form = reactive({
     title: '',
-    execution_time: 2147483647,
+    execution_time: null,
     questions: [
       {
         id: 1,
@@ -377,7 +377,7 @@
         answers: [
           {
             text: 'Вопрос 1 - Вариант 1',
-            next_question_id: 0
+            next_question_id: null
           }
         ]
       }
@@ -484,6 +484,13 @@
       back()
     }
   }
+
+  const isNextStepAvailable = computed(() => {
+    switch(step.value) {
+      case 1: return true
+      default: return true
+    }
+  })
 </script>
 
 <style lang="scss" scoped>
