@@ -1,7 +1,7 @@
 <template>
   <v-form v-model="valid" @submit.prevent>
-    <v-stepper v-model="step" alt-labels flat>
-      <v-stepper-header>
+    <v-stepper v-model="step" alt-labels flat class="custom-stepper">
+      <v-stepper-header class="custom-stepper__header">
         <v-stepper-item :value="1">
           Параметры
         </v-stepper-item>
@@ -25,16 +25,25 @@
 
       <v-stepper-window v-model="step">
         <v-stepper-window-item :value="1">
-          <v-label>Заголовок опроса</v-label>
-          <v-text-field hide-details variant="outlined" density="compact" v-model="form.title" />
+          <v-row>
+            <v-col cols="9">
+              <v-label>Заголовок опроса</v-label>
+              <v-text-field hide-details variant="outlined" density="compact" v-model="form.title" />
+            </v-col>
+          </v-row>
 
-          <v-label>Время на выполнение опроса</v-label>
-          <v-select hide-details variant="outlined" density="compact" v-model="form.execution_time" :items="execution_timeOptionsItems" />
+          <v-row>
+            <v-col cols="4">
+              <v-label>Время на выполнение опроса</v-label>
+              <v-select hide-details variant="outlined" density="compact" v-model="form.execution_time" :items="execution_timeOptionsItems" />
+            </v-col>
+          </v-row>
+
         </v-stepper-window-item>
         <v-stepper-window-item :value="2">
           <template v-for="(question, questionIndex) in form.questions" :key="`question-key-${question.id}`">
             <v-row>
-              <v-col>
+              <v-col cols="4">
                 <v-select
                   hide-details
                   variant="outlined"
@@ -45,7 +54,7 @@
               </v-col>
             </v-row>
             <v-row>
-              <v-col>
+              <v-col cols="9">
                 <v-text-field
                   hide-details
                   variant="outlined"
@@ -87,19 +96,19 @@
                   </v-radio-group>
                 </v-col>
               </v-row>
-              <v-row>
+              <v-row class="mt-0">
                 <v-col>
-                  <v-btn @click="addAnswer(questionIndex)">
-                    Добавить ответ
+                  <v-btn @click="addAnswer(questionIndex)" flat class="add-answer-button">
+                    + Добавить ответ
                   </v-btn>
                 </v-col>
               </v-row>
             </template>
           </template>
-          <v-row>
-            <v-col>
-              <v-btn @click="addQuestionToForm">
-                Добавить вопрос
+          <v-row class="add-question-button">
+            <v-col cols="12">
+              <v-btn @click="addQuestionToForm" flat variant="outlined" color="blue" width="100%">
+                + Добавить вопрос
               </v-btn>
             </v-col>
           </v-row>
@@ -264,25 +273,30 @@
         </v-stepper-window-item>
       </v-stepper-window>
 
-      <v-container>
+      <v-container class="custom-container">
         <v-row>
-          <v-col>
-            <v-btn
-              @click="onClickPrev"
-              variant="outlined"
-              color="#2196F3"
-              :disabled="step < 2"
-            >
-              Назад
-            </v-btn>
-          </v-col>
-          <v-col>
-            <v-btn v-if="step < 5" type="submit" color="#2196F3" @click="onClickNext">
-              Далее
-            </v-btn>
-            <v-btn v-else type="submit" color="#2196F3" @click="submit">
-              {{ !$route.href.includes('create') && !$route.params?.id ? 'Coxpaнить' : 'Создать' }}
-            </v-btn>
+          <v-col cols="4">
+            <v-row>
+              <v-col cols="5">
+                <v-btn
+                  @click="onClickPrev"
+                  variant="outlined"
+                  color="#2196F3"
+                  :disabled="step < 2"
+                >
+                  Назад
+                </v-btn>
+              </v-col>
+              <v-spacer></v-spacer>
+              <v-col cols="5">
+                <v-btn v-if="step < 5" type="submit" color="#2196F3" @click="onClickNext">
+                  Далее
+                </v-btn>
+                <v-btn v-else type="submit" color="#2196F3" @click="submit">
+                  {{ !$route.href.includes('create') && !$route.params?.id ? 'Coxpaнить' : 'Создать' }}
+                </v-btn>
+              </v-col>
+            </v-row>
           </v-col>
         </v-row>
       </v-container>
@@ -467,5 +481,38 @@
   :deep(.v-label) {
     width: 100%;
   }
+}
+
+.custom-stepper {
+  background-color: #eff3f5;
+
+  &__header {
+    border: 1px solid #E0E0E0;
+    border-radius: 8px;
+    box-shadow: none;
+    background-color: white;
+  }
+
+  :deep(.v-stepper-window) {
+    border: solid 1px #E0E0E0;
+    margin: 0;
+    padding: 24px;
+    border-radius: 8px;
+    box-shadow: none;
+    margin-top: 16px;
+    background-color: white;
+  }
+}
+
+.custom-container {
+  background-color: #eff3f5;
+}
+
+.add-answer-button {
+  color: #2196F3;
+}
+
+.add-question-button {
+  // background-color: #eff3f5;
 }
 </style>
