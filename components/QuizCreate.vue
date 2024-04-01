@@ -198,8 +198,8 @@
           <v-container class="pl-0">
             <v-btn @click="setConditionsAccess('Always')" :variant="form.conditions.access === 'Limited' ? 'outlined' : 'tonal'">Всегда</v-btn>
             <v-btn @click="setConditionsAccess('Limited')" :variant="form.conditions.access === 'Limited' ? 'tonal' : 'outlined'">Ограниченно</v-btn>
-            <v-row v-if="form.conditions.access === 'Limited'">
-              <v-col>
+            <v-row v-if="form.conditions.access === 'Limited'" class="mt-6">
+              <v-col cols="3">
                 <v-menu
                   v-model="startDateMenu"
                   :close-on-content-click="false"
@@ -218,6 +218,7 @@
                       append-inner-icon="mdi-chevron-down"
                       readonly
                       v-bind="props"
+                      hide-details
                     />
                   </template>
                   <v-date-picker
@@ -227,7 +228,7 @@
                   />
                 </v-menu>
               </v-col>
-              <v-col>
+              <v-col cols="3">
                 <v-menu
                   v-model="expirationDateMenu"
                   :close-on-content-click="false"
@@ -246,6 +247,7 @@
                       append-inner-icon="mdi-chevron-down"
                       readonly
                       v-bind="props"
+                      hide-details
                     />
                   </template>
                   <v-date-picker
