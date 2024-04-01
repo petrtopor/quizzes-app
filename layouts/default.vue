@@ -10,10 +10,10 @@
             <v-col cols="auto">
               <v-tabs slider-color="blue" class="custom-tabs" height="50px">
                 <v-tab to="/quizzes" width="240" bg-color="white" class="custom-tabs__tab" rounded="lg">
-                  Quizzes
+                  Мои опросы
                 </v-tab>
                 <v-tab to="/users" width="240" bg-color="white" class="custom-tabs__tab" rounded="lg">
-                  Users
+                  Пользователи
                 </v-tab>
               </v-tabs>
             </v-col>
@@ -21,7 +21,7 @@
             <v-col cols="auto">
               <v-btn
                 v-if="!$route.href.includes('create') && !$route.params?.id"
-                :to="`${$route.href}create`"
+                :to="`${$route.href.split('/').join('/')}/create`"
                 rounded="lg"
                 flat
                 height="48px"
