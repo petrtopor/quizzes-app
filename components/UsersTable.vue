@@ -1,6 +1,6 @@
 <template>
   <v-row>
-    <v-col cols="12">
+    <v-col cols="12" class="custom-col">
       <v-table
         height="300px"
         fixed-header
@@ -94,6 +94,7 @@
           </tr>
         </tbody>
       </v-table>
+      <pagination />
     </v-col>
   </v-row>
 </template>
@@ -128,3 +129,10 @@
     }
   }
 </script>
+
+<style lang="scss" scoped>
+.custom-col {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px 8px 0 0;
+}
+</style>
