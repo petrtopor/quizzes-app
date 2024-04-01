@@ -1,5 +1,4 @@
 <template>
-  <h3>Редактирование пользователя</h3>
   <Suspense>
     <template #default>
       <user-create />

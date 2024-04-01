@@ -1,5 +1,4 @@
 <template>
-  <h3>Quizzes page</h3>
   <Suspense>
     <template #default>
       <quizzes-table />

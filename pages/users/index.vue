@@ -1,5 +1,4 @@
 <template>
-  <h3>Users page</h3>
   <Suspense>
     <template #default>
       <users-table />
