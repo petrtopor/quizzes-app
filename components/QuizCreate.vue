@@ -250,12 +250,13 @@
             <v-row>
               <v-col>
                 <v-autocomplete
-                  label="Autocomplete"
                   :loading="isUsersLoading"
                   :items="users.map(user => ({ title: user.full_name, value: user.id }))"
                   variant="outlined"
                   density="compact"
-                  v-model="form.assignment[0].id"
+                  multiple
+                  :model-balue="form.assignment"
+                  @update:modelValue="onAssignmentUpdate"
                 />
               </v-col>
             </v-row>
@@ -291,7 +292,6 @@
 </template>
 
 <script lang="ts" setup>
-  import { filter } from 'vue-input-facade'
   const valid = ref(true)
   const isLoading = ref(false)
 
@@ -440,6 +440,10 @@
 
   if(params?.id) {
     await refresh()
+  }
+
+  const onAssignmentUpdate = (items: number[]) => {
+    form.assignment = items.map(item => ({ id: item }))
   }
   
   const submit = async () => {
