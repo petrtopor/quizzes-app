@@ -2,23 +2,23 @@
   <v-form v-model="valid" @submit.prevent>
     <v-stepper v-model="step" alt-labels flat class="custom-stepper">
       <v-stepper-header class="custom-stepper__header">
-        <v-stepper-item :value="1">
+        <v-stepper-item :value="1" :complete="step > 1">
           Параметры
         </v-stepper-item>
         <v-divider />
-        <v-stepper-item :value="2">
+        <v-stepper-item :value="2" :complete="step > 2">
           Вопросы
         </v-stepper-item>
         <v-divider />
-        <v-stepper-item :value="3">
+        <v-stepper-item :value="3" :complete="step > 3">
           Логика
         </v-stepper-item>
         <v-divider />
-        <v-stepper-item :value="4">
+        <v-stepper-item :value="4" :complete="step > 4">
           Условия
         </v-stepper-item>
         <v-divider />
-        <v-stepper-item :value="5">
+        <v-stepper-item :value="5" :complete="step > 5">
           Участники
         </v-stepper-item>
       </v-stepper-header>
