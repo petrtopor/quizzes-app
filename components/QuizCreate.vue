@@ -1,6 +1,6 @@
 <template>
   <v-form v-model="valid" @submit.prevent>
-    <v-stepper v-model="step">
+    <v-stepper v-model="step" alt-labels flat>
       <v-stepper-header>
         <v-stepper-item :value="1">
           Параметры
