@@ -221,6 +221,7 @@
                     />
                   </template>
                   <v-date-picker
+                    hide-header
                     v-model="startDate"
                     @update:modelValue="startDateMenu = false"
                   />
@@ -248,6 +249,7 @@
                     />
                   </template>
                   <v-date-picker
+                    hide-header
                     v-model="form.conditions.expiration_date"
                     @update:modelValue="expirationDateMenu = false"
                   />
