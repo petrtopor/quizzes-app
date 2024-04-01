@@ -8,11 +8,11 @@
         >
           <v-row justify="space-between">
             <v-col cols="auto">
-              <v-tabs>
-                <v-tab to="/quizzes">
+              <v-tabs slider-color="blue" class="custom-tabs" height="50px">
+                <v-tab to="/quizzes" width="240" bg-color="white" class="custom-tabs__tab" rounded="lg">
                   Quizzes
                 </v-tab>
-                <v-tab to="/users">
+                <v-tab to="/users" width="240" bg-color="white" class="custom-tabs__tab" rounded="lg">
                   Users
                 </v-tab>
               </v-tabs>
@@ -21,7 +21,11 @@
             <v-col cols="auto">
               <v-btn
                 v-if="!$route.href.includes('create') && !$route.params?.id"
-                :to="`${$route.href}/create`"
+                :to="`${$route.href}create`"
+                rounded="lg"
+                flat
+                height="48px"
+                color="blue"
               >
                 Создать
               </v-btn>
@@ -43,3 +47,18 @@
 <script lang="ts" setup>
   //
 </script>
+
+<style lang="scss" scoped>
+.custom-tabs {
+  width: 488px;
+
+  :deep(.v-slide-group__content) {
+    justify-content: space-between;
+  }
+
+  &__tab {
+    background-color: white;
+    border: 1px solid #E0E0E0;
+  }
+}
+</style>

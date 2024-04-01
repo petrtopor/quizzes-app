@@ -18,6 +18,7 @@
             </th>
             <th class="text-left">
               Статус
+              <v-icon icon="mdi-filter" class="ml-3" />
             </th>
           </tr>
         </thead>
