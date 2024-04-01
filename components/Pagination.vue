@@ -8,7 +8,7 @@
       <v-col align-self="center">
         <v-select
           hide-details
-          variant="plain"
+          variant="underlined"
           density="compact"
           :items="[{ title: '1', value: 1 }]"
           class="custom-select"
@@ -54,6 +54,6 @@
   border-radius: 0 0 8px 8px;
 }
 .custom-select {
-  border-bottom: 1px solid #0000006B!important;
+  // border-bottom: 1px solid #0000006B!important;
 }
 </style>
