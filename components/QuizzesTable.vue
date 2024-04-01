@@ -4,6 +4,11 @@
       <quiz-card :title="quiz.title" :id="quiz.id" @deleted="refresh()" />
     </v-col>
   </v-row>
+  <v-row>
+    <v-col cols="12">
+      <pagination />
+    </v-col>
+  </v-row>
 </template>
 
 <script lang="ts" setup>

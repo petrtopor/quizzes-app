@@ -2,7 +2,6 @@
   <v-row>
     <v-col cols="12" class="custom-col">
       <v-table
-        height="300px"
         fixed-header
       >
         <thead>
@@ -18,7 +17,25 @@
             </th>
             <th class="text-left">
               Статус
-              <v-icon icon="mdi-filter" class="ml-3" />
+              <v-menu v-model="isMenuOpen">
+                <template v-slot:activator="{ props }">
+                  <v-btn
+                    v-bind="props"
+                    flat
+                    slim
+                    icon="mdi-filter"
+                    size="small"
+                  />
+                </template>
+                <v-list
+                  :items="[{title: 'Активный', value: 'ACTIVE'}, {title: 'Заблокированный', value: 'BLOCKED'}]"
+                  v-model:selected="selectedItems"
+                >
+                  <template #append="{ isSelected }">
+                    <v-icon v-if="isSelected" icon="mdi-check" />
+                  </template>
+                </v-list>
+              </v-menu>
             </th>
           </tr>
         </thead>
@@ -108,6 +125,8 @@
     status: 'ACTIVE';
   }
 
+  const selectedItems = ref([])
+
   const { data: users, refresh } = await useFetch('http://127.0.0.1:8000/api/users/', {
     lazy: true,
     server: false
@@ -128,6 +147,8 @@
       refresh()
     }
   }
+
+  const isMenuOpen = ref(false)
 </script>
 
 <style lang="scss" scoped>
