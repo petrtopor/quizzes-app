@@ -28,7 +28,13 @@
           <v-row>
             <v-col cols="9">
               <v-label>Заголовок опроса</v-label>
-              <v-text-field hide-details variant="outlined" density="compact" v-model="form.title" />
+              <v-text-field
+                hide-details
+                variant="outlined"
+                density="compact"
+                v-model="form.title"
+                placeholder="Введите название опроса"
+              />
             </v-col>
           </v-row>
 
