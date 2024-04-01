@@ -127,7 +127,7 @@
               </div>
             </v-col>
           </v-row>
-          <v-container class="pl-0">
+          <v-container class="pl-0 form-logic-type-selector">
             <v-btn @click="setFormLogic('Sequential')" :variant="form.logic.type === 'Dependent' ? 'outlined' : 'tonal'">По порядку</v-btn>
             <v-btn @click="setFormLogic('Dependent')" :variant="form.logic.type === 'Dependent' ? 'tonal' : 'outlined'">Логический</v-btn>
           </v-container>
@@ -537,5 +537,21 @@
 
 .add-question-button {
   // background-color: #eff3f5;
+}
+
+.form-logic-type-selector {
+  button {
+    &:nth-of-type(1) {
+      border-radius: 4px 0 0 4px;
+    }
+    &:nth-of-type(2) {
+      border-radius: 0 4px 4px 0;
+    }
+  }
+  :deep(.v-btn--variant-tonal) {
+    background-color: #424242;
+    color: white;
+    border: 1px solid #424242;
+  }
 }
 </style>
