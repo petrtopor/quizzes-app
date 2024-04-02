@@ -520,19 +520,26 @@
   }
   
   const submit = async () => {
+    const assignment = form.assignment[0].id !== null ?
+      form.assignment :
+      users.value.map(({id}) => ({ id}))
+
+    const conditions = form.conditions.access !== 'Limited' ?
+      form.conditions :
+      {
+        ...form.conditions,
+        expiration_date: formatDateToSend(form.conditions.expiration_date)
+      }
+
     isLoading.value = true
     try {
       const response = await $fetch(`http://127.0.0.1:8000/api/quizzes${!params?.id ? '' : `/${params?.id}`}/`, {
         method: !params?.id ? 'POST' : 'PUT',
-        body: form.conditions.access !== 'Limited' ?
-          form :
-          {
-            ...form,
-            conditions: {
-              ...form.conditions,
-              expiration_date: formatDateToSend(form.conditions.expiration_date)
-            }
-          }
+        body: {
+          ...form,
+          conditions,
+          assignment
+        }
       })
     } catch(error) {
       console.error(error)
