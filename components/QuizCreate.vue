@@ -89,19 +89,23 @@
                       class="radio-answer-option"
                     >
                       <template #label>
-                        <v-row>
-                          <v-col cols="9">
+                        <v-row align="center" class="answer-row">
+                          <v-col cols="7">
                             <v-text-field
                               v-if="answerEditingNumber === answerIndex && questionEditingNumber === questionIndex"
                               hide-details
                               variant="outlined"
                               density="compact"
                               v-model="form.questions[questionIndex].answers[answerIndex].text"
-                              @blur="resetEditing"
+                              @blur="resetEditing(questionIndex, answerIndex)"
+                              @focus="onTextFieldFocus"
                             />
                             <div v-else class="text-body-2" @click="onAnswerLabelClick(answerIndex, questionIndex)">
                               {{ answer.text }}
                             </div>
+                          </v-col>
+                          <v-col cols="1" class="answer-row__delete-col">
+                            <v-btn icon="mdi-delete-outline" flat @click="removeAnswer(questionIndex, answerIndex)" />
                           </v-col>
                         </v-row>
                       </template>
@@ -349,15 +353,22 @@
 
   const step = ref(1)
 
+  const onTextFieldFocus = (event) => {
+    event.target.select()
+  }
+
   const answerEditingNumber = ref(null)
   const questionEditingNumber = ref(null)
   const onAnswerLabelClick = (answerIndex: number, questionIndex: number) => {
     answerEditingNumber.value = answerIndex
     questionEditingNumber.value = questionIndex
   }
-  const resetEditing = () => {
+  const resetEditing = (questionIndex: number, answerIndex: number) => {
     answerEditingNumber.value = null
     questionEditingNumber.value = null
+    if(!form.questions[questionIndex].answers[answerIndex].text) {
+      form.questions[questionIndex].answers[answerIndex].text = `${form.questions[questionIndex].text} - Вариант ${form.questions[questionIndex].answers.length + 1}`
+    }
   }
 
   const execution_timeOptionsItems = [
@@ -541,6 +552,16 @@
     { title: 'Все участники', value: null },
     ...users.value.map(user => ({ title: user.full_name, value: user.id }))
   ]))
+
+  const removeAnswer = (questionIndex: number, answerIndex: number) => {
+    if (questionIndex >= 0 && questionIndex < form.questions.length) {
+      const answers = form.questions[questionIndex].answers;
+      if (answerIndex >= 0 && answerIndex < answers.length) {
+        answers.splice(answerIndex, 1);
+        form.questions[questionIndex].answers = answers
+      }
+    }
+  }
 </script>
 
 <style lang="scss" scoped>
