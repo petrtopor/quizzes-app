@@ -281,7 +281,7 @@
                 <v-autocomplete
                   hide-details
                   :loading="isUsersLoading"
-                  :items="users.map(user => ({ title: user.full_name, value: user.id }))"
+                  :items="assignmentItems"
                   variant="outlined"
                   density="compact"
                   multiple
@@ -327,10 +327,10 @@
               </v-col>
               <v-spacer></v-spacer>
               <v-col cols="5">
-                <v-btn v-if="step < 5" type="submit" color="#2196F3" @click="onClickNext" :disabled="!isNextStepAvailable">
+                <v-btn v-if="step < 5" type="submit" color="#2196F3" @click="onClickNext" :disabled="!isNextStepAvailable" flat>
                   Далее
                 </v-btn>
-                <v-btn v-else type="submit" color="#2196F3" @click="submit">
+                <v-btn v-else type="submit" color="#2196F3" @click="submit" flat>
                   {{ !$route.href.includes('create') && !$route.params?.id ? 'Coxpaнить' : 'Создать' }}
                 </v-btn>
               </v-col>
@@ -427,11 +427,7 @@
       access: 'Always',
       expiration_date: null
     },
-    assignment: [
-      // {
-      //   id: null
-      // }
-    ]
+    assignment: []
   })
 
   const setConditionsAccess = (conditionsAccess: string) => {
@@ -494,8 +490,14 @@
     await refresh()
   }
 
-  const onAssignmentUpdate = (items: number[]) => {
-    form.assignment = items.map(item => ({ id: item }))
+  const onAssignmentUpdate = (items: (number|null)[]) => {
+    if(items.filter(item => item !== null).length === users.value.length || !form.assignment.map(({ id }) => id).includes(null) && items.includes(null)) {
+      form.assignment = [{ id: null }]
+    } else if(form.assignment.map(({ id }) => id).includes(null) && items.length > 1) {
+      form.assignment = items.filter(item => item !== null).map(item => ({ id: item }))
+    } else {
+      form.assignment = items.map(item => ({ id: item }))
+    }
   }
   
   const submit = async () => {
@@ -531,8 +533,14 @@
   })
 
   const selectionText = computed(() => {
-    return `Выбрано: ${form.assignment.length} участников`
+    const length = !form.assignment.map(({ id }) => id).includes(null) ? form.assignment.length : users.value.length
+    return `Выбрано: ${length} участников`
   })
+
+  const assignmentItems = computed(() => ([
+    { title: 'Все участники', value: null },
+    ...users.value.map(user => ({ title: user.full_name, value: user.id }))
+  ]))
 </script>
 
 <style lang="scss" scoped>
