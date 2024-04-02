@@ -415,6 +415,14 @@
     return new Date(date).toLocaleDateString('ru-RU', options)
   }
 
+  function formatDateToSend(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Adding 1 because months are 0-based
+    const day = String(date.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+  }
+
   const form = reactive({
     title: '',
     execution_time: null,
@@ -516,17 +524,15 @@
     try {
       const response = await $fetch(`http://127.0.0.1:8000/api/quizzes${!params?.id ? '' : `/${params?.id}`}/`, {
         method: !params?.id ? 'POST' : 'PUT',
-        body: form/* form.logic.type !== 'Sequential' ?
+        body: form.conditions.access !== 'Limited' ?
           form :
           {
             ...form,
-            questions: form.questions.map(question => ({
-              ...question,
-              answers: question.answers.map(answer => ({
-                text: answer.text
-              }))
-            }))
-          } */
+            conditions: {
+              ...form.conditions,
+              expiration_date: formatDateToSend(form.conditions.expiration_date)
+            }
+          }
       })
     } catch(error) {
       console.error(error)
