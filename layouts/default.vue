@@ -21,7 +21,7 @@
             <v-col cols="auto">
               <v-btn
                 v-if="!$route.href.includes('create') && !$route.params?.id"
-                :to="`${$route.href.split('/').join('/')}/create`"
+                :to="$route.href.includes('quizzes') ? '/quizzes/create/' : '/users/create/'"
                 rounded="lg"
                 flat
                 height="48px"
