@@ -41,7 +41,14 @@
           <v-row>
             <v-col cols="4">
               <v-label>Время на выполнение опроса</v-label>
-              <v-select hide-details variant="outlined" density="compact" v-model="form.execution_time" :items="execution_timeOptionsItems" />
+              <v-select
+                hide-details
+                variant="outlined"
+                density="compact"
+                v-model="form.execution_time"
+                :items="execution_timeOptionsItems"
+                placeholder="Выбрать время"
+              />
             </v-col>
           </v-row>
 
@@ -195,7 +202,7 @@
               </div>
             </v-col>
           </v-row>
-          <v-container class="pl-0">
+          <v-container class="pl-0 form-logic-type-selector">
             <v-btn @click="setConditionsAccess('Always')" :variant="form.conditions.access === 'Limited' ? 'outlined' : 'tonal'">Всегда</v-btn>
             <v-btn @click="setConditionsAccess('Limited')" :variant="form.conditions.access === 'Limited' ? 'tonal' : 'outlined'">Ограниченно</v-btn>
             <v-row v-if="form.conditions.access === 'Limited'" class="mt-6">
