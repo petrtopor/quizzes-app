@@ -27,7 +27,7 @@
         <v-stepper-window-item :value="1">
           <v-row>
             <v-col cols="9">
-              <v-label>Заголовок опроса</v-label>
+              <v-label class="parameter-caption">Заголовок опроса</v-label>
               <v-text-field
                 hide-details
                 variant="outlined"
@@ -40,7 +40,7 @@
 
           <v-row>
             <v-col cols="4">
-              <v-label>Время на выполнение опроса</v-label>
+              <v-label class="parameter-caption">Время на выполнение опроса</v-label>
               <v-select
                 hide-details
                 variant="outlined"
@@ -589,5 +589,16 @@
     color: white;
     border: 1px solid #424242;
   }
+}
+
+.parameter-caption {
+  // font-family: Roboto;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
+  letter-spacing: 0.5px;
+  text-align: left;
+  // color: #000000DE;
+  color: black;
 }
 </style>
