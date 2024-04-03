@@ -468,7 +468,7 @@
   const addAnswer = (questionIndex: number) => {
     form.questions[questionIndex].answers.push({
       text: `${form.questions[questionIndex].text} - Вариант ${form.questions[questionIndex].answers.length + 1}`,
-      next_question_id: 0
+      next_question_id: null
     })
   }
 
@@ -481,7 +481,7 @@
       answers: [
         {
           text: `Вопрос ${previousQuestion.id + 1} - Вариант 1`,
-          next_question_id: 0
+          next_question_id: null
         }
       ]
     })
